@@ -43,9 +43,37 @@ app.registerExtension({
             }
 
             if (!this.iframeWidget) {
+                const refreshEl = document.createElement("button");
+                refreshEl.innerHTML = "refresh"
+                refreshEl.style = `
+                    height: 24px;
+                    max-height: 24px;
+                    border: #5a5a5a solid 2px;
+                    background: #222222;
+                    font-size: 12px;
+                    color: #dddddd;
+                `
+                refreshEl.addEventListener('click', () => {
+                    console.log('refresh')
+                    iframeEl.srcdoc = ''
+                    requestAnimationFrame(() => {
+                        iframeEl.srcdoc = html
+                    })
+                })
+
                 const iframeEl = document.createElement("iframe");
                 iframeEl.style.border = 'none'
-                refreshIframeSize(iframeEl);
+
+
+                const refreshWidget = this.addDOMWidget("Refresh", "div", refreshEl, {
+                    minNodeSize: {
+                        width: 100,
+                        height: 32,
+                    },
+                    getMinHeight: () => 32,
+                    getMaxHeight: () => 32,
+                    getHeight: () => 32
+                });
 
                 const widget = this.addDOMWidget("html", "customtext", iframeEl, {
                     getValue() {
@@ -54,8 +82,12 @@ app.registerExtension({
                     setValue(v) {
                         iframeEl.srcdoc = v;
                     },
+                    getMinHeight: () => 32,
+                    getMaxHeight: () => 32,
+                    getHeight: () => 32
                 });
                 widget.iframeEl = iframeEl;
+                widget.refreshEl = refreshEl;
 
 
                 this.iframeWidget = widget;
