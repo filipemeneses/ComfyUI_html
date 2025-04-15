@@ -1,0 +1,13 @@
+[project]
+name = "comfyui-html"
+description = "Nodes to manipulate HTML."
+version = "1.0.0"
+
+[project.urls]
+Repository = "https://github.com/filipemeneses/ComfyUI_html"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "filipemeneses"
+DisplayName = "comfy_pixelization"
+Icon = ""
