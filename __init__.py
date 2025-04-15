@@ -186,6 +186,42 @@ class SingleImageToBase64:
 
         return {"ui": {"base64Image": base64Image}, "result": (base64Image,)}
 
+class LoadHtml:
+    @classmethod
+    def INPUT_TYPES(s):
+        input_dir = folder_paths.get_input_directory()
+        files = [f for f in os.listdir(input_dir) if f.endswith('.html') and os.path.isfile(os.path.join(input_dir, f))]
+        return {"required":
+                    {"html_file": (sorted(files), {"html_file_upload": True})},
+                }
+
+    CATEGORY = "html"
+
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "load_html"
+    def load_html(self, html_file):
+        html_path = folder_paths.get_annotated_filepath(html_file)
+
+        with open(html_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+
+        return (html_content,)
+
+    @classmethod
+    def IS_CHANGED(s, html_file):
+        html_path = folder_paths.get_annotated_filepath(html_file)
+        m = hashlib.sha256()
+        with open(html_path, 'rb') as f:
+            m.update(f.read())
+        return m.digest().hex()
+
+    @classmethod
+    def VALIDATE_INPUTS(s, html_file):
+        if not folder_paths.exists_annotated_filepath(html_file):
+            return "Invalid HTML file: {}".format(html_file)
+        
+        return True
+
 
 
 # Set the web directory, any .js file in that directory will be loaded by the frontend as a frontend extension
@@ -204,6 +240,7 @@ WEB_DIRECTORY = "./js"
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
 NODE_CLASS_MAPPINGS = {
+    "LoadHtml": LoadHtml,
     "HtmlPreview": HtmlPreview,
     "HtmlDownload": HtmlDownload,
     "SaveHtml": SaveHtml,
@@ -212,6 +249,7 @@ NODE_CLASS_MAPPINGS = {
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
+    "LoadHtml": "Load HTML",
     "HtmlPreview": "HTML Preview",
     "HtmlDownload": "HTML Download",
     "SaveHtml": "Save HTML",
