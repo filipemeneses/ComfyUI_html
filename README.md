@@ -30,8 +30,21 @@ A node that allows you to download HTML content as a file:
 
 A utility node that converts an image into a base64 string representation:
 
-- `images`: Input image to convert
+- `image`: Input image to convert
 - Returns: Base64 encoded string of the image
+
+### Save HTML
+
+A node that saves HTML content to your ComfyUI output directory:
+
+- `html`: HTML content to save (string input)
+- `filename_prefix`: Prefix for the output filename (default: "ComfyUI")
+
+The filename prefix supports formatting patterns:
+
+- Date/time: `%date:yyyy-MM-dd%`, `%date:hh-mm-ss%` etc.
+
+The HTML file will be saved with an auto-incrementing counter in your ComfyUI output folder.
 
 
 ## Workflows

@@ -2,6 +2,8 @@ from .util import tensor_to_pil,  image_to_base64
 from comfy.cli_args import args
 from PIL.PngImagePlugin import PngInfo
 import json
+import os
+import folder_paths
 
 class HtmlPreview:
     @classmethod
@@ -101,6 +103,55 @@ class HtmlDownload:
         return {"ui": {"html": html, "filename": filename}, "result": ()}
 
 
+class SaveHtml:
+    def __init__(self):
+        self.output_dir = folder_paths.get_output_directory()
+        self.type = "output"
+        self.prefix_append = ""
+        self.compress_level = 4
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "html": ("STRING", {"tooltip": "The HTML to save.", "forceInput": True}),
+                "filename_prefix": ("STRING", {"default": "ComfyUI", "tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."})
+            },
+            "hidden": {
+                "prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"
+            },
+        }
+
+    RETURN_TYPES = ()
+    FUNCTION = "save_html"
+
+    OUTPUT_NODE = True
+
+    CATEGORY = "util"
+    DESCRIPTION = "Saves the input HTML to your ComfyUI output directory."
+
+    def save_html(self, html, filename_prefix="ComfyUI", prompt=None, extra_pnginfo=None):
+        filename_prefix += self.prefix_append
+        # Use get_save_image_path but with dummy dimensions since we're saving HTML
+        full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(filename_prefix, self.output_dir, 1, 1)
+        print(full_output_folder, filename)
+        # Generate filename
+        filename_with_counter = f"{filename}_{counter:05}.html"
+        full_path = os.path.join(full_output_folder, filename_with_counter)
+
+        # Save the HTML file
+        with open(full_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+
+        results = [{
+            "filename": filename_with_counter,
+            "subfolder": subfolder,
+            "type": self.type
+        }]
+
+        return { "ui": {  }, "result": () }
+
+
 class SingleImageToBase64:
     @classmethod
     def INPUT_TYPES(self):
@@ -155,6 +206,7 @@ WEB_DIRECTORY = "./js"
 NODE_CLASS_MAPPINGS = {
     "HtmlPreview": HtmlPreview,
     "HtmlDownload": HtmlDownload,
+    "SaveHtml": SaveHtml,
     "SingleImageToBase64": SingleImageToBase64,
 }
 
@@ -162,6 +214,7 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "HtmlPreview": "HTML Preview",
     "HtmlDownload": "HTML Download",
+    "SaveHtml": "Save HTML",
     "SingleImageToBase64": "Single image to base64",
 }
 
