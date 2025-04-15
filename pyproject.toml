@@ -9,5 +9,5 @@ Repository = "https://github.com/filipemeneses/ComfyUI_html"
 
 [tool.comfy]
 PublisherId = "filipemeneses"
-DisplayName = "comfy_pixelization"
+DisplayName = "ComfyUI_html"
 Icon = ""
