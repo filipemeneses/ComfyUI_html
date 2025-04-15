@@ -106,9 +106,6 @@ app.registerExtension({
             }
 
             this.addOrUpdateIframe(sanitizeMessage({ width, height, scale, isPortrait, html }));
-            // if (this.widgets_values?.length) {
-            //     populate.call(this, this.widgets_values.slice(+this.widgets_values.length > 1));
-            // }
         };
 
         // const onNodeCreated = nodeType.prototype.onNodeCreated;
