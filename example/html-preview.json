@@ -1,0 +1,272 @@
+{
+  "id": "fac67677-fc86-411f-b030-bdc9229e1997",
+  "revision": 0,
+  "last_node_id": 51,
+  "last_link_id": 48,
+  "nodes": [
+    {
+      "id": 31,
+      "type": "PrimitiveString",
+      "pos": [
+        2330,
+        760
+      ],
+      "size": [
+        315,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            26
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.27",
+        "Node name for S&R": "PrimitiveString"
+      },
+      "widgets_values": [
+        "<img src=\"HERE\"/><style>img{width:100vw}</style>"
+      ]
+    },
+    {
+      "id": 50,
+      "type": "SingleImageToBase64",
+      "pos": [
+        2330,
+        880
+      ],
+      "size": [
+        310,
+        40
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 46
+        }
+      ],
+      "outputs": [
+        {
+          "name": "base64Image",
+          "type": "STRING",
+          "links": [
+            47
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "filipemeneses/ComfyUI_html",
+        "ver": "a23349cead6b14cdee580c5cb364e4fa7d2be684",
+        "Node name for S&R": "SingleImageToBase64"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 33,
+      "type": "CR Text Replace",
+      "pos": [
+        2680,
+        760
+      ],
+      "size": [
+        400,
+        252
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          },
+          "link": 26
+        },
+        {
+          "name": "replace1",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "replace1"
+          },
+          "link": 47
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "*",
+          "links": [
+            27
+          ]
+        },
+        {
+          "name": "show_help",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "ComfyUI_Comfyroll_CustomNodes",
+        "ver": "d78b780ae43fcf8c6b7c6505e6ffb4584281ceca",
+        "Node name for S&R": "CR Text Replace"
+      },
+      "widgets_values": [
+        "",
+        "HERE",
+        "b",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 38,
+      "type": "LoadImage",
+      "pos": [
+        1990,
+        770
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            46
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.27",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "example.png",
+        "image",
+        ""
+      ]
+    },
+    {
+      "id": 32,
+      "type": "HtmlPreview",
+      "pos": [
+        3110,
+        760
+      ],
+      "size": [
+        395,
+        895
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "html",
+          "type": "STRING",
+          "widget": {
+            "name": "html"
+          },
+          "link": 27
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "filipemeneses/ComfyUI_html",
+        "ver": "a23349cead6b14cdee580c5cb364e4fa7d2be684",
+        "Node name for S&R": "HtmlPreview"
+      },
+      "widgets_values": [
+        375,
+        667,
+        1,
+        true,
+        "",
+        ""
+      ]
+    }
+  ],
+  "links": [
+    [
+      26,
+      31,
+      0,
+      33,
+      0,
+      "STRING"
+    ],
+    [
+      27,
+      33,
+      0,
+      32,
+      0,
+      "STRING"
+    ],
+    [
+      46,
+      38,
+      0,
+      50,
+      0,
+      "IMAGE"
+    ],
+    [
+      47,
+      50,
+      0,
+      33,
+      1,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.895430243255349,
+      "offset": [
+        -1789.7863419341484,
+        -654.2301317294375
+      ]
+    }
+  },
+  "version": 0.4
+}

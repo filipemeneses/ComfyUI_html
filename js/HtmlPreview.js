@@ -2,7 +2,6 @@ import { app } from "../../scripts/app.js";
 
 const NODE_NAME = 'HtmlPreview'
 
-// Register a new node type
 app.registerExtension({
     name: "HTML Preview",
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
@@ -71,34 +70,46 @@ app.registerExtension({
         }
 
 
-        const sanitizeMessage = (msg, fallback) => Array.isArray(msg) && msg?.length ? msg[0] : fallback
+        const sanitizeMessageAttr = (msg, fallback) => Array.isArray(msg) && msg?.length ? msg[0] : fallback
+        const sanitizeMessage = message => {
+            const html = sanitizeMessageAttr(message?.html, '')
+            const width = sanitizeMessageAttr(message?.width, 0)
+            const height = sanitizeMessageAttr(message?.height, 0)
+            const scale = sanitizeMessageAttr(message?.scale, 1)
+            const isPortrait = sanitizeMessageAttr(message?.is_portrait, true)
 
-        const onExecuted = nodeType.prototype.onExecuted;
-        nodeType.prototype.onExecuted = function (message) {
-            onExecuted?.apply(this, arguments);
-            const html = sanitizeMessage(message?.html, '')
-            const width = sanitizeMessage(message?.width, 0)
-            const height = sanitizeMessage(message?.height, 0)
-            const scale = sanitizeMessage(message?.scale, 1)
-            const isPortrait = sanitizeMessage(message?.is_portrait, true)
-
-            this.addOrUpdateIframe({
+            return {
                 html,
                 width,
                 height,
                 scale,
                 isPortrait
-            });
+            }
+        }
+
+        const onExecuted = nodeType.prototype.onExecuted;
+        nodeType.prototype.onExecuted = function (message) {
+            onExecuted?.apply(this, arguments);
+
+            this.addOrUpdateIframe(sanitizeMessage(message));
         };
 
-        // const onConfigure = nodeType.prototype.onConfigure;
-        // nodeType.prototype.onConfigure = function () {
-        //     onConfigure?.apply(this, arguments);
-        //     console.log(this.widgets_values)
-        //     if (this.widgets_values?.length) {
-        //         populate.call(this, this.widgets_values.slice(+this.widgets_values.length > 1));
-        //     }
-        // };
+        const onConfigure = nodeType.prototype.onConfigure;
+        nodeType.prototype.onConfigure = function () {
+            onConfigure?.apply(this, arguments);
+            if (!this.widgets_values) {
+                return;
+            }
+            const [width, height, scale, isPortrait, html] = this.widgets_values
+            if (!html) {
+                return;
+            }
+
+            this.addOrUpdateIframe(sanitizeMessage({ width, height, scale, isPortrait, html }));
+            // if (this.widgets_values?.length) {
+            //     populate.call(this, this.widgets_values.slice(+this.widgets_values.length > 1));
+            // }
+        };
 
         // const onNodeCreated = nodeType.prototype.onNodeCreated;
         // nodeType.prototype.onNodeCreated = function () {

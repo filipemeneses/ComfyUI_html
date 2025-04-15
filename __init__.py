@@ -1,3 +1,8 @@
+from .util import tensor_to_pil,  image_to_base64 
+from comfy.cli_args import args
+from PIL.PngImagePlugin import PngInfo
+import json
+
 class HtmlPreview:
     @classmethod
     def INPUT_TYPES(s):
@@ -51,34 +56,41 @@ class HtmlPreview:
 
         return {"ui": {"html": html, "width": width, "height": height, "scale": scale, "is_portrait": is_portrait}, "result": (html,)}
 
-    # def check_lazy_status(self, image, string_field, int_field, float_field, print_to_screen):
-    #     """
-    #         Return a list of input names that need to be evaluated.
+class SingleImageToBase64:
+    @classmethod
+    def INPUT_TYPES(self):
+        return {"required": {
+            "images": ("IMAGE",),
+        },
+            "hidden": {"extra_pnginfo": "EXTRA_PNGINFO"},
+        }
 
-    #         This function will be called if there are any lazy inputs which have not yet been
-    #         evaluated. As long as you return at least one field which has not yet been evaluated
-    #         (and more exist), this function will be called again once the value of the requested
-    #         field is available.
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("base64Image",)
 
-    #         Any evaluated inputs will be passed as arguments to this function. Any unevaluated
-    #         inputs will have the value None.
-    #     """
-    #     if print_to_screen == "enable":
-    #         return ["int_field", "float_field", "string_field"]
-    #     else:
-    #         return []
+    FUNCTION = "convert"
+    OUTPUT_NODE = True
 
-    # """
-    #     The node will always be re executed if any of the inputs change but
-    #     this method can be used to force the node to execute again even when the inputs don't change.
-    #     You can make this node return a number or a string. This value will be compared to the one returned the last time the node was
-    #     executed, if it is different the node will be executed again.
-    #     This method is used in the core repo for the LoadImage node where they return the image hash as a string, if the image hash
-    #     changes between executions the LoadImage node is executed again.
-    # """
-    #@classmethod
-    #def IS_CHANGED(s, image, string_field, int_field, float_field, print_to_screen):
-    #    return ""
+    CATEGORY = "utils"
+
+    # INPUT_IS_LIST = False
+    # OUTPUT_IS_LIST = (False,False,)
+
+    def convert(self, images, extra_pnginfo=None):
+        i = images[0]
+        img = tensor_to_pil(i)
+        metadata = None
+        if not args.disable_metadata:
+            metadata = PngInfo()
+            if extra_pnginfo is not None:
+                for x in extra_pnginfo:
+                    metadata.add_text(x, json.dumps(extra_pnginfo[x]))
+
+        base64Image = image_to_base64(img, pnginfo=metadata)
+
+        return {"ui": {"base64Image": base64Image}, "result": (base64Image,)}
+
+
 
 # Set the web directory, any .js file in that directory will be loaded by the frontend as a frontend extension
 WEB_DIRECTORY = "./js"
@@ -96,12 +108,14 @@ WEB_DIRECTORY = "./js"
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
 NODE_CLASS_MAPPINGS = {
-    "HtmlPreview": HtmlPreview
+    "HtmlPreview": HtmlPreview,
+    "SingleImageToBase64": SingleImageToBase64,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "HtmlPreview": "HTML Preview",
+    "SingleImageToBase64": "Single image to base64",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']
