@@ -9,25 +9,23 @@ app.registerExtension({
             return
         }
 
-        const sanitizeMessageAttr = (msg, fallback) => Array.isArray(msg) && msg?.length ? msg[0] : fallback
+        const sanitizeMessageAttr = (msg, fallback) => Array.isArray(msg) && msg?.length ? msg.join('') : fallback
         const sanitizeMessage = message => {
-            const html = sanitizeMessageAttr(message?.html, '')
             const filename = sanitizeMessageAttr(message?.filename, 'myFile')
+            const temp_url = sanitizeMessageAttr(message?.temp_url, '')
             return {
                 filename,
-                html,
+                temp_url,
             }
         }
-        const downloadHtmlAsFile = ({ filename, html }) => {
-            const blob = new Blob([html], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
+        const downloadHtmlAsFile = ({ filename, temp_url }) => {
+            console.log('downloadHtmlAsFile', filename, temp_url)
             const link = document.createElement('a');
-            link.href = url;
+            link.href = temp_url;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(url);
         }
 
         const onExecuted = nodeType.prototype.onExecuted;

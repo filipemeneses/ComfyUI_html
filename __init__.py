@@ -76,7 +76,6 @@ class HtmlDownload:
         }
 
     RETURN_TYPES = ()
-    INPUT_IS_LIST = True
     FUNCTION = "runHtmlDownload"
     OUTPUT_NODE = True
 
@@ -100,7 +99,19 @@ class HtmlDownload:
                 if node:
                     node["widgets_values"] = [html]
 
-        return {"ui": {"html": html, "filename": filename}, "result": ()}
+        # Create a temporary file in the output directory
+        temp_dir = folder_paths.get_temp_directory()
+        temp_filename = f"temp_{filename}"
+        temp_path = os.path.join(temp_dir, temp_filename)
+
+        # Save the HTML to the temporary file
+        with open(temp_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+
+        # Create the URL for the temporary file using ComfyUI's file serving mechanism
+        temp_url = f"/view?filename={temp_filename}&type=temp"
+
+        return {"ui": {"filename": filename, "temp_url": temp_url}, "result": ()}
 
 
 class SaveHtml:
@@ -134,7 +145,7 @@ class SaveHtml:
         filename_prefix += self.prefix_append
         # Use get_save_image_path but with dummy dimensions since we're saving HTML
         full_output_folder, filename, counter, subfolder, filename_prefix = folder_paths.get_save_image_path(filename_prefix, self.output_dir, 1, 1)
-        print(full_output_folder, filename)
+
         # Generate filename
         filename_with_counter = f"{filename}_{counter:05}.html"
         full_path = os.path.join(full_output_folder, filename_with_counter)
