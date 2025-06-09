@@ -168,6 +168,29 @@ class SingleImageToBase64:
     def INPUT_TYPES(self):
         return {"required": {
             "images": ("IMAGE",),
+        }}
+
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("base64Image",)
+
+    FUNCTION = "convert"
+    OUTPUT_NODE = False
+
+    CATEGORY = "utils"
+
+    def convert(self, images):
+        i = images[0]
+        img = tensor_to_pil(i)
+        base64Image = image_to_base64(img)
+
+        return {"ui": {"base64Image": base64Image}, "result": (base64Image,)}
+
+
+class SingleImageToBase64KeepMetadata:
+    @classmethod
+    def INPUT_TYPES(self):
+        return {"required": {
+            "images": ("IMAGE",),
         },
             "hidden": {"extra_pnginfo": "EXTRA_PNGINFO"},
         }
@@ -179,9 +202,6 @@ class SingleImageToBase64:
     OUTPUT_NODE = False
 
     CATEGORY = "utils"
-
-    # INPUT_IS_LIST = False
-    # OUTPUT_IS_LIST = (False,False,)
 
     def convert(self, images, extra_pnginfo=None):
         i = images[0]
@@ -256,6 +276,7 @@ NODE_CLASS_MAPPINGS = {
     "HtmlDownload": HtmlDownload,
     "SaveHtml": SaveHtml,
     "SingleImageToBase64": SingleImageToBase64,
+    "SingleImageToBase64KeepMetadata": SingleImageToBase64KeepMetadata,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
@@ -265,6 +286,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "HtmlDownload": "HTML Download",
     "SaveHtml": "Save HTML",
     "SingleImageToBase64": "Single image to base64",
+    "SingleImageToBase64KeepMetadata": "Single image to base64 keep metadata",
 }
 
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']
