@@ -228,15 +228,18 @@ class LoadHtml:
 
     CATEGORY = "html"
 
-    RETURN_TYPES = ("STRING",)
+    RETURN_TYPES = ("STRING","STRING")
+    RETURN_NAMES = ("STRING","filename")
+
     FUNCTION = "load_html"
+
     def load_html(self, html_file):
         html_path = folder_paths.get_annotated_filepath(html_file)
 
         with open(html_path, 'r', encoding='utf-8') as f:
             html_content = f.read()
 
-        return (html_content,)
+        return (html_content,html_file)
 
     @classmethod
     def IS_CHANGED(s, html_file):
